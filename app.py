@@ -399,7 +399,7 @@ else:
         with t2:
             if not CI.empty:
                 st.info("Y = Reactive pair | N = Non-reactive | X = Same substance")
-                z=CI.applymap(lambda v:2 if v=="Y" else 0 if v=="N" else 1)
+                z=CI.apply(lambda col: col.map(lambda v:2 if v=="Y" else 0 if v=="N" else 1))
                 fig=gobj.Figure(gobj.Heatmap(z=z.values,x=CI.columns.tolist(),y=CI.index.tolist(),
                     colorscale=[[0,"#dcfce7"],[0.5,"#fef3c7"],[1,"#fee2e2"]],
                     text=CI.values,texttemplate="%{text}",showscale=False,xgap=3,ygap=3))
@@ -436,9 +436,15 @@ else:
             sl=float(pr.get("sol_min",0)); sh=float(pr.get("sol_max",100))
             sc=float(pr.get("soc_min",0)); sch=float(pr.get("soc_max",100))
             span=sh-sl if sh>sl else 100; pad=span*.15
+            _smin = round(sl-pad, 4)
+            _smax = round(sh+pad, 4)
+            _sdef = round((sc+sch)/2, 4)
+            _step = round(span/200, 4) if span>0 else 0.1
+            if _step <= 0: _step = 0.001
+            if _smax <= _smin: _smax = _smin + 1.0
+            _sdef = max(_smin, min(_smax, _sdef))
             cur=st.slider(f"{pr['parameter']} ({pr.get('uom','')})",
-                round(sl-pad,2),round(sh+pad,2),round((sc+sch)/2,2),
-                step=round(span/200,3) if span>0 else 0.1)
+                _smin, _smax, _sdef, step=_step)
             status,_=get_deviation_status(cur,(sc,sch),(sl,sh))
             if "SOL" in status: st.error(f"SOL BREACH — {status} | {pr.get('consequence','')}")
             elif "SOC" in status: st.warning(f"SOC BREACH — {status}")
