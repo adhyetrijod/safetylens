@@ -1,0 +1,15 @@
+[theme]
+base="light"
+primaryColor="#1e90ff"
+backgroundColor="#f4f6f9"
+secondaryBackgroundColor="#0d1b2a"
+textColor="#0d1b2a"
+font="sans serif"
+
+[theme.sidebar]
+backgroundColor="#0d1b2a"
+secondaryBackgroundColor="#162636"
+textColor="#c8dae6"
+
+[client]
+initialSidebarState="expanded"
